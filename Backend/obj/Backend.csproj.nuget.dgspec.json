@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\crist\\Desktop\\sofware 2\\Logistica-Backend\\Backend\\Backend.csproj": {}
+    "C:\\Users\\User\\Desktop\\DESARROLLO_SOFTWARE_II\\TRABAJO\\Logistica-Backend\\Backend\\Backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\crist\\Desktop\\sofware 2\\Logistica-Backend\\Backend\\Backend.csproj": {
+    "C:\\Users\\User\\Desktop\\DESARROLLO_SOFTWARE_II\\TRABAJO\\Logistica-Backend\\Backend\\Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\crist\\Desktop\\sofware 2\\Logistica-Backend\\Backend\\Backend.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\DESARROLLO_SOFTWARE_II\\TRABAJO\\Logistica-Backend\\Backend\\Backend.csproj",
         "projectName": "Backend",
-        "projectPath": "C:\\Users\\crist\\Desktop\\sofware 2\\Logistica-Backend\\Backend\\Backend.csproj",
-        "packagesPath": "C:\\Users\\crist\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\crist\\Desktop\\sofware 2\\Logistica-Backend\\Backend\\obj\\",
+        "projectPath": "C:\\Users\\User\\Desktop\\DESARROLLO_SOFTWARE_II\\TRABAJO\\Logistica-Backend\\Backend\\Backend.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\DESARROLLO_SOFTWARE_II\\TRABAJO\\Logistica-Backend\\Backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\crist\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -44,6 +44,10 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[9.0.0, )"
@@ -56,6 +60,14 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[9.0.0, )"
+            },
+            "Supabase": {
+              "target": "Package",
+              "version": "[1.1.1, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.5.0, )"
             }
           },
           "imports": [

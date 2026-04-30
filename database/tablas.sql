@@ -9,6 +9,7 @@ CREATE TABLE vehiculo (
     placa VARCHAR(6) NOT NULL UNIQUE,
     modelo VARCHAR(100) NOT NULL,
     estado estado_vehiculo NOT NULL DEFAULT 'ACTIVO',
+    user_id uuid REFERENCES auth.users(id),---vamo a ver
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT placa_formato_check CHECK (placa ~ '^[A-Z0-9]{6}$')
@@ -42,6 +43,7 @@ CREATE TABLE conductor (
     telefono VARCHAR(15),
     email VARCHAR(100),
     estado VARCHAR(20) NOT NULL DEFAULT 'ACTIVO',
+    user_id UUID REFERENCES auth.users(id) UNIQUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT dni_formato_check CHECK (dni ~ '^[0-9]{8}$')
@@ -112,3 +114,64 @@ CREATE TRIGGER update_conductor_updated_at
 CREATE TRIGGER update_solicitud_servicio_updated_at 
     BEFORE UPDATE ON solicitud_servicio 
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+
+
+
+-- =====================================================
+-- 8. TABLA ROLES
+-- =====================================================
+
+CREATE TABLE public.roles(
+    id uuid PRIMARY KEY,
+    role text NOT NULL DEFAULT 'CONDUCTOR',
+    CONSTRAINT fk_user FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE,
+    CONSTRAINT role_check CHECK (role IN ('ADMINISTRADOR', 'CONDUCTOR'))
+);
+
+
+---TRIGGER
+create or REPLACE function public.handle_new_user()
+returns TRIGGER as $$
+begin
+  insert into public.roles (id,role)
+  values (new.id, 'CONDUCTOR');
+  return new;
+end;
+$$ language plpgsql;
+
+create trigger on_auth_user_created
+after insert on auth.users
+for each row execute procedure public.handle_new_user();
+
+
+
+--=============================
+--RLS
+--=============================
+
+ALTER TABLE conductor 
+ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id) UNIQUE;
+
+
+alter table vehiculo enable row level security;
+CREATE POLICY "vista_conductores" ON conductor
+FOR SELECT USING (auth.uid()=user_id );
+
+CREATE POLICY "admins_full_access_conductor" ON conductor
+FOR ALL USING (
+    EXISTS(SELECT 1 FROM roles WHERE id = auth.uid() AND role = 'ADMINISTRADOR')
+);
+
+CREATE POLICY "conductores_ven_sus_vehiculos" ON vehiculo
+FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "admins_full_vehiculo" ON vehiculo
+FOR ALL USING (
+    EXISTS(SELECT 1 FROM roles WHERE id = auth.uid() AND role = 'ADMINISTRADOR')
+);
+    
+
+UPDATE roles
+SET role = 'ADMINISTRADOR'
+WHERE id=(SELECT id FROM auth.users WHERE email='administrador56@gmail.com');
