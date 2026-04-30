@@ -1,0 +1,10 @@
+C:\Users\crist\Desktop\sofware 2\Logistica-Backend\Backend\obj\Debug\net9.0\rpswa.dswa.cache.json
+C:\Users\crist\Desktop\sofware 2\Logistica-Backend\Backend\obj\Debug\net9.0\Backend.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\crist\Desktop\sofware 2\Logistica-Backend\Backend\obj\Debug\net9.0\Backend.AssemblyInfoInputs.cache
+C:\Users\crist\Desktop\sofware 2\Logistica-Backend\Backend\obj\Debug\net9.0\Backend.AssemblyInfo.cs
+C:\Users\crist\Desktop\sofware 2\Logistica-Backend\Backend\obj\Debug\net9.0\Backend.csproj.CoreCompileInputs.cache
+C:\Users\crist\Desktop\sofware 2\Logistica-Backend\Backend\obj\Debug\net9.0\Backend.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\crist\Desktop\sofware 2\Logistica-Backend\Backend\obj\Debug\net9.0\Backend.RazorAssemblyInfo.cache
+C:\Users\crist\Desktop\sofware 2\Logistica-Backend\Backend\obj\Debug\net9.0\Backend.RazorAssemblyInfo.cs
+C:\Users\crist\Desktop\sofware 2\Logistica-Backend\Backend\obj\Debug\net9.0\Backend.sourcelink.json
+C:\Users\crist\Desktop\sofware 2\Logistica-Backend\Backend\obj\Debug\net9.0\Backend.csproj.AssemblyReference.cache
