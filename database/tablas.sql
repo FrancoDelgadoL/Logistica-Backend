@@ -1,15 +1,19 @@
--- 1. CREAR TIPO ENUM PARA ESTADOS DEL VEHÍCULO
+-- =====================================================
+-- 1. TIPOS ENUM
+-- =====================================================
 CREATE TYPE estado_vehiculo AS ENUM ('ACTIVO', 'INHABILITADO', 'MANTENIMIENTO');
+CREATE TYPE estado_solicitud AS ENUM ('ASIGNAR_VIAJE', 'EN_TRANSITO', 'COMPLETAR');
 
 -- =====================================================
--- 2. TABLA: VEHICULO
+-- 2. TABLA VEHICULO (con user_id y capacidad_carga)
 -- =====================================================
 CREATE TABLE vehiculo (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     placa VARCHAR(6) NOT NULL UNIQUE,
     modelo VARCHAR(100) NOT NULL,
+    capacidad_carga NUMERIC(10,2) NOT NULL,
     estado estado_vehiculo NOT NULL DEFAULT 'ACTIVO',
-    user_id uuid REFERENCES auth.users(id),---vamo a ver
+    user_id UUID REFERENCES auth.users(id),          -- ← se mantiene
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT placa_formato_check CHECK (placa ~ '^[A-Z0-9]{6}$')
@@ -18,7 +22,7 @@ CREATE TABLE vehiculo (
 -- =====================================================
 -- 3. TABLA: DOCUMENTO_VIGENCIA (Relación 1 a muchos con VEHICULO)
 -- =====================================================
-CREATE TABLE documento_vigencia (
+CREATE TABLE documento_vehiculo (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     vehiculo_id UUID NOT NULL REFERENCES vehiculo(id) ON DELETE RESTRICT,
     tipo_documento VARCHAR(50) NOT NULL,
@@ -35,19 +39,19 @@ CREATE TABLE documento_vigencia (
 -- =====================================================
 CREATE TABLE conductor (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    dni VARCHAR(8) NOT NULL UNIQUE,
     nombres VARCHAR(100) NOT NULL,
     apellidos VARCHAR(100) NOT NULL,
-    dni VARCHAR(8) NOT NULL UNIQUE,
-    licencia_cat VARCHAR(5) NOT NULL,
+    licencia_categoria VARCHAR(5) NOT NULL,
     fecha_vencimiento_licencia DATE NOT NULL,
     telefono VARCHAR(15),
-    email VARCHAR(100),
     estado VARCHAR(20) NOT NULL DEFAULT 'ACTIVO',
-    user_id UUID REFERENCES auth.users(id) UNIQUE,
+    user_id UUID REFERENCES auth.users(id) UNIQUE,   -- ← se mantiene y es único
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT dni_formato_check CHECK (dni ~ '^[0-9]{8}$')
 );
+
 
 -- =====================================================
 -- 5. TABLA: SOLICITUD_SERVICIO (SOLO DATOS DE LA SOLICITUD)
@@ -55,37 +59,39 @@ CREATE TABLE conductor (
 -- =====================================================
 CREATE TABLE solicitud_servicio (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nombre_cliente VARCHAR(200) NOT NULL,
-    fecha_solicitud TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    punto_recogida_direccion VARCHAR(255) NOT NULL,
-    punto_recogida_distrito VARCHAR(100) NOT NULL,
+    codigo_servicio VARCHAR(50) NOT NULL UNIQUE,
+    vehiculo_id UUID NULL REFERENCES vehiculo(id) ON DELETE RESTRICT,
+    conductor_id UUID NULL REFERENCES conductor(id) ON DELETE RESTRICT,
+    estado estado_solicitud NOT NULL DEFAULT 'ASIGNAR_VIAJE',
+    cliente_nombre VARCHAR(200) NOT NULL,
+    direccion_origen VARCHAR(255) NOT NULL,
     terminal_destino VARCHAR(50) NOT NULL,
     tipo_carga VARCHAR(100),
-    peso_estimado_kg NUMERIC(10, 2),
-    estado_solicitud VARCHAR(20) NOT NULL DEFAULT 'PENDIENTE',
+    peso_aprox_carga NUMERIC(10,2),
+    fecha_solicitud TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT terminal_destino_check CHECK (terminal_destino IN ('Santa Anita', 'Callao'))
+    CONSTRAINT terminal_destino_check CHECK (terminal_destino IN ('Santa Anita', 'Callao')),
+    CONSTRAINT asignacion_coherente CHECK (
+        (estado = 'ASIGNAR_VIAJE' AND vehiculo_id IS NULL AND conductor_id IS NULL) OR
+        (estado IN ('EN_TRANSITO', 'COMPLETAR') AND vehiculo_id IS NOT NULL AND conductor_id IS NOT NULL)
+    )
 );
 
 -- =====================================================
 -- 6. CREAR ÍNDICES
 -- =====================================================
 
--- Índices para DOCUMENTO_VIGENCIA
-CREATE INDEX idx_documento_vehiculo ON documento_vigencia(vehiculo_id);
-CREATE INDEX idx_documento_fechas ON documento_vigencia(fecha_expiracion);
-CREATE INDEX idx_documento_tipo ON documento_vigencia(tipo_documento);
-
--- Índices para CONDUCTOR
+CREATE INDEX idx_vehiculo_placa ON vehiculo(placa);
+CREATE INDEX idx_vehiculo_user_id ON vehiculo(user_id);
+CREATE INDEX idx_documento_vehiculo_id ON documento_vehiculo(vehiculo_id);
+CREATE INDEX idx_documento_vehiculo_expiracion ON documento_vehiculo(fecha_expiracion);
 CREATE INDEX idx_conductor_dni ON conductor(dni);
-CREATE INDEX idx_conductor_licencia_cat ON conductor(licencia_cat);
-
--- Índices para SOLICITUD_SERVICIO
-CREATE INDEX idx_solicitud_estado ON solicitud_servicio(estado_solicitud);
-CREATE INDEX idx_solicitud_cliente ON solicitud_servicio(nombre_cliente);
-CREATE INDEX idx_solicitud_fechas ON solicitud_servicio(fecha_solicitud);
-CREATE INDEX idx_solicitud_terminal ON solicitud_servicio(terminal_destino);
+CREATE INDEX idx_conductor_user_id ON conductor(user_id);
+CREATE INDEX idx_solicitud_codigo ON solicitud_servicio(codigo_servicio);
+CREATE INDEX idx_solicitud_estado ON solicitud_servicio(estado);
+CREATE INDEX idx_solicitud_vehiculo ON solicitud_servicio(vehiculo_id);
+CREATE INDEX idx_solicitud_conductor ON solicitud_servicio(conductor_id);
 
 -- =====================================================
 -- 7. TRIGGER PARA updated_at
