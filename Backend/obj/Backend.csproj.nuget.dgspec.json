@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\DESARROLLO_SOFTWARE_II\\TRABAJO\\Logistica-Backend\\Backend\\Backend.csproj": {}
+    "C:\\Users\\Fiorella\\Desktop\\clon para ht2\\Logistica-Backend\\Backend\\Backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\DESARROLLO_SOFTWARE_II\\TRABAJO\\Logistica-Backend\\Backend\\Backend.csproj": {
+    "C:\\Users\\Fiorella\\Desktop\\clon para ht2\\Logistica-Backend\\Backend\\Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\DESARROLLO_SOFTWARE_II\\TRABAJO\\Logistica-Backend\\Backend\\Backend.csproj",
+        "projectUniqueName": "C:\\Users\\Fiorella\\Desktop\\clon para ht2\\Logistica-Backend\\Backend\\Backend.csproj",
         "projectName": "Backend",
-        "projectPath": "C:\\Users\\User\\Desktop\\DESARROLLO_SOFTWARE_II\\TRABAJO\\Logistica-Backend\\Backend\\Backend.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\DESARROLLO_SOFTWARE_II\\TRABAJO\\Logistica-Backend\\Backend\\obj\\",
+        "projectPath": "C:\\Users\\Fiorella\\Desktop\\clon para ht2\\Logistica-Backend\\Backend\\Backend.csproj",
+        "packagesPath": "C:\\Users\\Fiorella\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Fiorella\\Desktop\\clon para ht2\\Logistica-Backend\\Backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Fiorella\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -89,7 +89,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.303/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
