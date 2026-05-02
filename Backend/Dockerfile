@@ -1,17 +1,19 @@
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-COPY . .
+COPY Backend.csproj ./
 RUN dotnet restore
-RUN dotnet publish -c Release -o out
+
+COPY . ./
+RUN dotnet publish -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 
-COPY --from=build /app/out .
+COPY --from=build /app/publish .
 
 EXPOSE 10000
 
-ENTRYPOINT ["dotnet", "Backend.dll"]
+CMD ["dotnet", "Backend.dll"]
