@@ -1,3 +1,27 @@
 # .gitignore
 .env
 .env.local
+# =========================
+# .NET (Backend)
+# =========================
+Backend/bin/
+Backend/obj/
+**/bin/
+**/obj/
+
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+*.dll
+*.exe
+*.pdb
+
+
+# =========================
+# LOGS
+# =========================
+*.log
+logs/
