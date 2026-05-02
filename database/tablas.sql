@@ -13,14 +13,14 @@ CREATE TABLE vehiculo (
     modelo VARCHAR(100) NOT NULL,
     capacidad_carga NUMERIC(10,2) NOT NULL,
     estado estado_vehiculo NOT NULL DEFAULT 'ACTIVO',
-    user_id UUID REFERENCES auth.users(id),          -- ← se mantiene
+    user_id UUID REFERENCES auth.users(id),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT placa_formato_check CHECK (placa ~ '^[A-Z0-9]{6}$')
 );
 
 -- =====================================================
--- 3. TABLA: DOCUMENTO_VIGENCIA (Relación 1 a muchos con VEHICULO)
+-- 3. TABLA DOCUMENTO_VEHICULO (¡no documento_vigencia!)
 -- =====================================================
 CREATE TABLE documento_vehiculo (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -35,7 +35,7 @@ CREATE TABLE documento_vehiculo (
 );
 
 -- =====================================================
--- 4. TABLA: CONDUCTOR
+-- 4. TABLA CONDUCTOR (con user_id, licencia, vencimiento, sin email)
 -- =====================================================
 CREATE TABLE conductor (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -46,16 +46,14 @@ CREATE TABLE conductor (
     fecha_vencimiento_licencia DATE NOT NULL,
     telefono VARCHAR(15),
     estado VARCHAR(20) NOT NULL DEFAULT 'ACTIVO',
-    user_id UUID REFERENCES auth.users(id) UNIQUE,   -- ← se mantiene y es único
+    user_id UUID REFERENCES auth.users(id) UNIQUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT dni_formato_check CHECK (dni ~ '^[0-9]{8}$')
 );
 
-
 -- =====================================================
--- 5. TABLA: SOLICITUD_SERVICIO (SOLO DATOS DE LA SOLICITUD)
--- SIN vehiculo_id, sin conductor_id, sin fecha_inicio_servicio
+-- 5. TABLA SOLICITUD_SERVICIO (con asignación posterior)
 -- =====================================================
 CREATE TABLE solicitud_servicio (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -79,9 +77,8 @@ CREATE TABLE solicitud_servicio (
 );
 
 -- =====================================================
--- 6. CREAR ÍNDICES
+-- 6. ÍNDICES
 -- =====================================================
-
 CREATE INDEX idx_vehiculo_placa ON vehiculo(placa);
 CREATE INDEX idx_vehiculo_user_id ON vehiculo(user_id);
 CREATE INDEX idx_documento_vehiculo_id ON documento_vehiculo(vehiculo_id);
@@ -96,7 +93,6 @@ CREATE INDEX idx_solicitud_conductor ON solicitud_servicio(conductor_id);
 -- =====================================================
 -- 7. TRIGGER PARA updated_at
 -- =====================================================
-
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -109,8 +105,8 @@ CREATE TRIGGER update_vehiculo_updated_at
     BEFORE UPDATE ON vehiculo 
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_documento_vigencia_updated_at 
-    BEFORE UPDATE ON documento_vigencia 
+CREATE TRIGGER update_documento_vehiculo_updated_at 
+    BEFORE UPDATE ON documento_vehiculo 
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_conductor_updated_at 
@@ -120,9 +116,6 @@ CREATE TRIGGER update_conductor_updated_at
 CREATE TRIGGER update_solicitud_servicio_updated_at 
     BEFORE UPDATE ON solicitud_servicio 
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-
-
 
 -- =====================================================
 -- 8. TABLA ROLES
